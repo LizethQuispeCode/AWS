@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: backend-app
+  
+  datasource:
+    url: jdbc:sqlserver://${DB_IP:localhost}:1433;databaseName=proyecto_db;encrypt=false;trustServerCertificate=true
+    username: ${DB_USER:sa}
+    password: ${DB_PASSWORD:TuPassword123}
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+  
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.SQLServerDialect
+        format_sql: true
+
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+logging:
+  level:
+    root: INFO
+    com.proyecto.backend: DEBUG
