@@ -1,0 +1,58 @@
+<div class="container">
+  <header class="header">
+    <h1>Frontend - Arquitectura Distribuida AWS</h1>
+    <p>Consumiendo datos del backend en EC2 privada</p>
+  </header>
+
+  <main class="main-content">
+    <div class="controls">
+      <button class="btn btn-primary" (click)="recargar()" [disabled]="cargando">
+        {{ cargando ? 'Cargando...' : 'Recargar Datos' }}
+      </button>
+    </div>
+
+    <!-- Estado de Carga -->
+    <div *ngIf="cargando" class="loading">
+      <div class="spinner"></div>
+      <p>Conectando con backend en IP privada...</p>
+    </div>
+
+    <!-- Mensaje de Error -->
+    <div *ngIf="error && !cargando" class="alert alert-error">
+      <strong>Error:</strong> {{ error }}
+      <p class="hint">Verifica que el backend esté ejecutándose en http://IP_PRIVADA_BACKEND:8080</p>
+    </div>
+
+    <!-- Tabla de Usuarios -->
+    <div *ngIf="!cargando && !error && usuarios.length > 0" class="table-container">
+      <table class="usuarios-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Correo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let usuario of usuarios" class="usuario-row">
+            <td>{{ usuario.id }}</td>
+            <td>{{ usuario.nombre }}</td>
+            <td>{{ usuario.correo }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="info">
+        <strong>Total de usuarios:</strong> {{ usuarios.length }}
+      </div>
+    </div>
+
+    <!-- Sin Datos -->
+    <div *ngIf="!cargando && !error && usuarios.length === 0" class="no-data">
+      <p>No hay datos disponibles. El backend puede no estar respondiendo.</p>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>Frontend ejecutándose en Puerto 80 | Backend: http://IP_PRIVADA_BACKEND:8080/datos</p>
+  </footer>
+</div>
