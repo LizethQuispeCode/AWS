@@ -1,20 +1,67 @@
 version: '3.8'
 
 services:
+  # SQL Server Database
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver-db
+    environment:
+      SA_PASSWORD: "TuPassword123"
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Developer"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+      - ./backend/setup-database.sql:/setup-database.sql
+    networks:
+      - proyecto-network
+    healthcheck:
+      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P TuPassword123 -Q "SELECT 1" || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # Backend Spring Boot
   backend:
-    build: .
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     container_name: backend-app
     ports:
       - "8080:8080"
     environment:
-      # Reemplazar con la IP privada de la EC2 de SQL Server en AWS
-      DB_IP: 10.0.0.X  # Cambiar por IP privada real
+      DB_IP: sqlserver
       DB_USER: sa
       DB_PASSWORD: TuPassword123
-    restart: unless-stopped
+      SPRING_PROFILES_ACTIVE: prod
+    depends_on:
+      sqlserver:
+        condition: service_healthy
     networks:
-      - backend-network
+      - proyecto-network
+    restart: unless-stopped
+
+  # Frontend Angular + Nginx
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend-app
+    ports:
+      - "80:80"
+    environment:
+      BACKEND_URL: http://backend:8080/api
+    depends_on:
+      - backend
+    networks:
+      - proyecto-network
+    restart: unless-stopped
+
+volumes:
+  sqlserver-data:
 
 networks:
-  backend-network:
+  proyecto-network:
     driver: bridge
