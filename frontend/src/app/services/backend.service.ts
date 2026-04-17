@@ -13,9 +13,9 @@ export interface Usuario {
 })
 export class BackendService {
   
-  // Endpoint del backend - IP PRIVADA en EC2
-  // En producción, cambiar por la IP privada real del backend EC2
-  private backendUrl = 'http://10.0.0.10:8080/datos';
+  // Endpoint del backend - URL relativa (nginx proxy)
+  // El frontend contacta a nginx en localhost, que redirige a backend privado
+  private backendUrl = '/api/usuarios';
 
   constructor(private http: HttpClient) { }
 
