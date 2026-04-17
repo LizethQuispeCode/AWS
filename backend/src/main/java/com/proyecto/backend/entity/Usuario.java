@@ -22,4 +22,28 @@ public class Usuario {
     @Column(name = "correo", nullable = false, unique = true)
     private String correo;
 
+    // Explicit setters to ensure Java 25 compatibility with Lombok
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setCorreo(String correo) {
+        this.correo = correo;
+    }
+
+    public String getCorreo() {
+        return correo;
+    }
 }
